@@ -136,17 +136,16 @@ var scouting = {
                 score = 0;
                 break;
             case 1:
-                var distance = utilities.GetDistance(startPos, sources[0].pos);
+                var distance = utilities.GetDistance(startPos, sources[0].pos, true);
                 score += 50 - distance;
                 break;
             case 2:
-                var distanceOne = utilities.GetDistance(startPos, sources[0].pos);
-                var distanceTwo = utilities.GetDistance(startPos, sources[1].pos);
+                var distanceOne = utilities.GetDistance(startPos, sources[0].pos, true);
+                var distanceTwo = utilities.GetDistance(startPos, sources[1].pos, true);
 
                 var avgDistance = (distanceOne + distanceTwo) / 2;
                 score += 100 - avgDistance; //100 BONUS score for double source
                 break;
-
         }
 
         //Don't expand to other players rooms for now. Maybe fight for remotes later?

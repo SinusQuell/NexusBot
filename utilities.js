@@ -287,7 +287,7 @@ let utilities = {
         });
         return labsToEmpty;
     },
-    GetDistance: function(startPos, endPos) {
+    GetDistance: function(startPos, endPos, returnCost = false) {
         let ret = PathFinder.search(startPos, { pos: endPos, range: 1},
         {
             plainCost: 2,
@@ -319,7 +319,12 @@ let utilities = {
                 return costs;
             },
         });
-        return ret.path.length;
+
+        if (returnCost === true) {
+            return ret.path.cost;
+        } 
+        return ret.path.length;   
+        
     },
     CheckRouteForVision: function(startRoom, targetRoom) {
         var routeRooms = Game.map.findRoute(startRoom, targetRoom);
