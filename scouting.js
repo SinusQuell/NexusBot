@@ -40,7 +40,7 @@ var scouting = {
         
         return sortedRooms[sortedRooms.length-1-quality];
     },
-    DidScoutForRemotes: function(colony) {
+    DidScoutForRemotes: function(colony, early = false) {
         var connectedRooms = this.GetConnectedRooms(colony);
         var allScored = true;
         connectedRooms.forEach(rm => {
@@ -53,7 +53,16 @@ var scouting = {
             if (!Memory.rooms[rm]['score']) {
                 allScored = false;
             }
+
+            if (Memory.rooms[rm]['score'] == null) {
+                allScored = false;
+            }
         });
+
+        if (early === true && allScored === true) {
+            Memory.colonies[colony].scouting['didEarlyScouting'] = true;
+            return allScored;
+        }
 
         if (allScored === true) {
             Memory.colonies[colony].scouting['didScoutForRemotes'] = true;
@@ -67,9 +76,14 @@ var scouting = {
             if (!connectedRooms || connectedRooms.length == 0) return;
 
             connectedRooms.forEach(rm => {
+                if (!rm) return;
+                if (!Memory.rooms[rm]) {
+                    Memory.rooms[rm] = {};
+                }
+
                 score = Memory.rooms[rm]['score'];
                 if (!score) {
-                    spawningRemote.SpawnScout(freeSpawn, rm);
+                    spawningRemote.SpawnScout(utilities.FindFreeSpawn(colony), rm);
                     return;
                 }
             });
@@ -81,9 +95,14 @@ var scouting = {
             if (!connectedRooms || connectedRooms.length == 0) return;
 
             connectedRooms.forEach(rm => {
+                if (!rm) return;
+                if (!Memory.rooms[rm]) {
+                    Memory.rooms[rm] = {};
+                }
+
                 score = Memory.rooms[rm]['score'];
                 if (!score) {
-                    spawningRemote.SpawnScout(freeSpawn, rm);
+                    spawningRemote.SpawnScout(utilities.FindFreeSpawn(colony), rm);
                     return;
                 }
             });
@@ -116,51 +135,53 @@ var scouting = {
 
     // === GATHER DATA ===
     IsRoomOccupied: function(rm) {
-        if (Game.rooms[rm]) { //check for vision
-            ctrl = Game.rooms[rm].controller;
+        if (!Game.rooms[rm]) return; //check for vision
+        if (!Memory.rooms[rm]) Memory.rooms[rm] = {}; //create Memory Object if it doesn't exist yet
 
-            if (ctrl.level > 0 || ctrl.reservation.ticksToEnd > 0) {
-                //room is claimed or reserved!
-                Memory.rooms[rm]['isOccupied'] = true;
-                return true;
-            }
-            Memory.rooms[rm]['isOccupied'] = false;
+        ctrl = Game.rooms[rm].controller;
+        
+        if (ctrl.level > 0 || (ctrl.reservation && ctrl.reservation.ticksToEnd > 0)) {
+            //room is claimed or reserved!
+            Memory.rooms[rm]['isOccupied'] = true;
+            return true;
         }
+        Memory.rooms[rm]['isOccupied'] = false;
     },
     CheckSourceAmount: function(rm) {
-        //Set flag if there are 2 sources in the room
-        if (Game.rooms[rm]) { //check for vision
-            var sources = Game.rooms[rm].find(FIND_SOURCES);
-            if (sources.length > 1) {
-                var twoSourceFlag = Game.rooms[rm].find(FIND_FLAGS, {
-                    filter: (f) => {
-                        return (f.color == COLOR_YELLOW);
-                    }
-                });
-                if (twoSourceFlag.length == 0) {
-                    Game.rooms[rm].createFlag(25, 25, '2S_' + rm, COLOR_YELLOW, COLOR_YELLOW);
+        //Set flag if there are 2 sources in the room and save source data in memory
+        if (!Game.rooms[rm]) return; //check for vision
+        if (!Memory.rooms[rm]) Memory.rooms[rm] = {}; //create Memory Object if it doesn't exist yet
+
+        var sources = Game.rooms[rm].find(FIND_SOURCES);
+        if (sources.length > 1) {
+            var twoSourceFlag = Game.rooms[rm].find(FIND_FLAGS, {
+                filter: (f) => {
+                    return (f.color == COLOR_YELLOW);
                 }
-            } 
-            if (!Memory.rooms[rm]) Memory.rooms[rm] = {};
-            Memory.rooms[rm]['sourceAmount'] = sources.length;
-            Memory.rooms[rm]['sources'] = sources; 
-        }
+            });
+            if (twoSourceFlag.length == 0) {
+                Game.rooms[rm].createFlag(25, 25, '2S_' + rm, COLOR_YELLOW, COLOR_YELLOW);
+            }
+        } 
+        if (!Memory.rooms[rm]) Memory.rooms[rm] = {};
+        Memory.rooms[rm]['sourceAmount'] = sources.length;
+        Memory.rooms[rm]['sources'] = sources; 
     },
     CalculateRemoteMineScore(colony, rm, saveToMemory = false) {
         if (!Game.rooms[colony] || !Game.rooms[rm]) return; //check for vision
         if (!Memory.rooms[rm]) Memory.rooms[rm] = {}; //create Memory Object if it doesn't exist yet
-        if (Memory.rooms[rm]['score']) return; //already checked
-        if (Game.rooms[rm].controller && (Game.rooms[rm].controller.level > 0 || Game.rooms[rm].controller.reservation > 0)) {
+        if (Memory.rooms[rm]['score'] && Memory.rooms[rm]['score'] != null) return; //already checked
+        if (this.IsRoomOccupied() === true) {
             return 0; // Room is claimed or reserved, score = 0
         }
-
+        
         var score = 0;
         var sources = Game.rooms[rm].find(FIND_SOURCES);
-
+        
         var originX = Memory.colonies[colony].autobuild['originX'];
         var originY = Memory.colonies[colony].autobuild['originY'];
         var startPos = new RoomPosition(originX, originY, colony);
-
+        
         switch (sources.length) {
             default:
                 score = 0;
@@ -176,8 +197,8 @@ var scouting = {
                 var avgCost = (costOne + costTwo) / 2;
                 score += 100 - avgCost; //100 BONUS score for double source
                 break;
-        }
-
+            }
+            
         //Don't expand to other players rooms for now. Maybe fight for remotes later?
         var hostiles = Game.rooms[rm].find(FIND_HOSTILE_CREEPS);
         if (hostiles.length && hostiles.length > 0) {
@@ -185,14 +206,12 @@ var scouting = {
         }        
 
         //TODO: check for remote mines of other rooms to make sure two colonies don't mine the same remote room
-
         if (saveToMemory === true) {
             if (!Memory.rooms[rm]) {
                 Memory.rooms[rm] = {};
             }
             Memory.rooms[rm]['score'] = score;
         }
-
         return score;
     }
 };

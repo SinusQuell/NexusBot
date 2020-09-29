@@ -14,7 +14,7 @@ let autospawn = {
                 utilities.UpdateColonyMemory(ctrl);
                 utilities.CleanFlags(rm);
                 if (ctrl.level < 3) { //For RCL1/2
-                    var freeSpawn = utilities.FindFreeSpawn(ctrl.room);
+                    var freeSpawn = utilities.FindFreeSpawn(ctrl.room.name);
                     if (freeSpawn) {
                         //CHECK PRESENT CREEP AMOUNTS
                         var realWorkersS0 = _.sum(groupedCreeps[ctrl.room.name], (c) => c.memory.role == 'worker' && c.memory.homeRoom == ctrl.room.name && c.memory.s == 0 );
@@ -61,7 +61,7 @@ let autospawn = {
                     }
                 } else { //For RCL 3+
                     squads.UpdateRallyStatus(ctrl.room.name);
-            	    var freeSpawn = utilities.FindFreeSpawn(ctrl.room);
+            	    var freeSpawn = utilities.FindFreeSpawn(ctrl.room.name);
                     if (freeSpawn) {
                         //GET INFO NEEDED TO DECIDE ON CREEP AMOUNTS/SIZES
                         var droppedEnergy = utilities.GetRoomDroppedEnergy(ctrl.room.name);
@@ -425,7 +425,8 @@ let autospawn = {
         var homeCtrl = Game.rooms[colony].controller;
 
         if (homeCtrl.level < 2) return; //Minimum RCL is 2
-
+        if (!(Game.time % 100 == 0)) return; //Every 100 Ticks.
+        
         scouting.EarlyScouting(colony);
         console.log('<font color="#ffdd32" type="highlight">' + 'Scouting rooms around <b>' + colony + '</b> ... </font>');
     },

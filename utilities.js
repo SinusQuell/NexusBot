@@ -62,7 +62,7 @@ let utilities = {
         //bunkerLayout.SaveInMemory_Circle();
     },
     FindFreeSpawn: function(rm) {
-        var spwns = rm.find(FIND_MY_SPAWNS, {
+        var spwns = Game.rooms[rm].find(FIND_MY_SPAWNS, {
             filter: (structure) => {
                 return (structure.spawning == null);
             }
@@ -322,7 +322,7 @@ let utilities = {
         });
 
         if (returnCost === true) {
-            return ret.path.cost;
+            return ret.cost;
         } 
         return ret.path.length;   
         
