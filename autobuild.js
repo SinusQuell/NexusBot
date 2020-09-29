@@ -485,11 +485,18 @@ let autobuild = {
             return true;
         } else return false;
     },
-    SetAutoBuild: function(rm, enabled, originX, originY) {
+    SetAutoBuild: function(rm, enabled, originX, originY, reset = false) {
         Memory.colonies[rm].autobuild['enable'] = enabled;
         Memory.colonies[rm].autobuild['originX'] = originX;
         Memory.colonies[rm].autobuild['originY'] = originY;
-        console.log('<font color="#ffdd32" type="highlight">' + 'Autobuilder enabled in: ' + rm + '</font>');
+
+        if (reset === true) {
+            Memory.colonies[rm].autobuild['RCL'] = 1;
+            Memory.colonies[rm].autobuild['labStage'] = 0;
+            Memory.colonies[rm].autobuild['rampartStage'] = 0;
+        }
+
+        return '<font color="#ffdd32" type="highlight">' + 'Autobuilder enabled in: ' + rm + '</font>';
     },
     
     //BuildRoad only works from rooms with autobuild enabled!

@@ -418,5 +418,8 @@ let utilities = {
         Game.rooms[rm].controller.unclaim();
         delete Memory.colonies[rm];
     },
+    FindCloseSources: function(originPos, range) {
+        
+    }
 };
 module.exports = utilities;
