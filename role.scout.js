@@ -8,6 +8,7 @@ var roleScout = {
         } else {
             //IN TARGET ROOM!
             creep.travelTo({ pos: new RoomPosition(25,25,creep.memory.target)}, {range: 10});
+            scouting.IsRoomOccupied(creep.room.name);
             scouting.CheckSourceAmount(creep.room.name);
             scouting.CalculateRemoteMineScore(creep.memory.homeRoom, creep.room.name, true);
         }

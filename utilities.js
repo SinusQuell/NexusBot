@@ -57,6 +57,7 @@ let utilities = {
         if (!Memory.colonies[rm].scouting) {
             Memory.colonies[rm].scouting = {};
             Memory.colonies[rm].scouting['didScoutForRemotes'] = false;
+            Memory.colonies[rm].scouting['didEarlyScouting'] = false;
         }
         //bunkerLayout.SaveInMemory_Circle();
     },
@@ -419,7 +420,7 @@ let utilities = {
         delete Memory.colonies[rm];
     },
     FindCloseSources: function(originPos, range) {
-        
+
     }
 };
 module.exports = utilities;

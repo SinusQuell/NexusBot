@@ -53,6 +53,9 @@ let autospawn = {
                                 spawningHome.SpawnWorker(freeSpawn, 0, workerSize, ctrl.room.name);
                             } else if (realWorkersS1 < wantedWorkersS1) {
                                 spawningHome.SpawnWorker(freeSpawn, 1, workerSize, ctrl.room.name);
+                            } else {
+                                //ALL REGULAR UNITS ARE SPAWNED
+                                this.DoEarlyScouting(ctrl.room.name);
                             }
                         }
                     }
@@ -413,9 +416,18 @@ let autospawn = {
                     utilities.AddRemoteMine(colony, secondBestRemote);
                 }
             }
+            //TODO: Check how many sources are being mined in a colony and potentially connect a third remote.
         } catch (error) {
             console.log(error);
         }
+    },
+    DoEarlyScouting: function(colony) {
+        var homeCtrl = Game.rooms[colony].controller;
+
+        if (homeCtrl.level < 2) return; //Minimum RCL is 2
+
+        scouting.EarlyScouting(colony);
+        console.log('<font color="#ffdd32" type="highlight">' + 'Scouting rooms around <b>' + colony + '</b> ... </font>');
     },
 };
 module.exports = autospawn;

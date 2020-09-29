@@ -75,6 +75,21 @@ var scouting = {
             });
         }
     },
+    EarlyScouting: function(colony) {
+        if (Memory.colonies[colony].scouting['didEarlyScouting'] === false) {
+            var connectedRooms = scouting.GetConnectedRooms(colony);
+            if (!connectedRooms || connectedRooms.length == 0) return;
+
+            connectedRooms.forEach(rm => {
+                score = Memory.rooms[rm]['score'];
+                if (!score) {
+                    spawningRemote.SpawnScout(freeSpawn, rm);
+                    return;
+                }
+            });
+        }
+    },
+    
     /**
      * From first=worst to last=best
      */
@@ -84,6 +99,8 @@ var scouting = {
         var rmObjects = [];
         connectedRooms.forEach(rm => {
             if (rm == undefined) return;
+            if (Memory.rooms[rm]['isOccupied'] = true) return; //don't return occupied rooms!
+
             rmObj = {room: rm, score: Memory.rooms[rm]['score']};
             rmObjects.push(rmObj);
         });
@@ -98,6 +115,18 @@ var scouting = {
     },
 
     // === GATHER DATA ===
+    IsRoomOccupied: function(rm) {
+        if (Game.rooms[rm]) { //check for vision
+            ctrl = Game.rooms[rm].controller;
+
+            if (ctrl.level > 0 || ctrl.reservation.ticksToEnd > 0) {
+                //room is claimed or reserved!
+                Memory.rooms[rm]['isOccupied'] = true;
+                return true;
+            }
+            Memory.rooms[rm]['isOccupied'] = false;
+        }
+    },
     CheckSourceAmount: function(rm) {
         //Set flag if there are 2 sources in the room
         if (Game.rooms[rm]) { //check for vision
@@ -114,6 +143,7 @@ var scouting = {
             } 
             if (!Memory.rooms[rm]) Memory.rooms[rm] = {};
             Memory.rooms[rm]['sourceAmount'] = sources.length;
+            Memory.rooms[rm]['sources'] = sources; 
         }
     },
     CalculateRemoteMineScore(colony, rm, saveToMemory = false) {
@@ -136,15 +166,15 @@ var scouting = {
                 score = 0;
                 break;
             case 1:
-                var distance = utilities.GetDistance(startPos, sources[0].pos, true);
-                score += 50 - distance;
+                var cost = utilities.GetDistance(startPos, sources[0].pos, true);
+                score += 50 - cost;
                 break;
             case 2:
-                var distanceOne = utilities.GetDistance(startPos, sources[0].pos, true);
-                var distanceTwo = utilities.GetDistance(startPos, sources[1].pos, true);
+                var costOne = utilities.GetDistance(startPos, sources[0].pos, true);
+                var costTwo = utilities.GetDistance(startPos, sources[1].pos, true);
 
-                var avgDistance = (distanceOne + distanceTwo) / 2;
-                score += 100 - avgDistance; //100 BONUS score for double source
+                var avgCost = (costOne + costTwo) / 2;
+                score += 100 - avgCost; //100 BONUS score for double source
                 break;
         }
 
