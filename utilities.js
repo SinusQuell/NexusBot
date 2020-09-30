@@ -421,6 +421,26 @@ let utilities = {
     },
     FindCloseSources: function(originPos, range) {
 
+    },
+    //this does not include dropped energy at the moment
+    GetTotalRoomEnergy: function(rm) {
+        if (!Game.rooms[rm]) return false;
+
+        var stores = Game.rooms[rm].find(FIND_STRUCTURES, {
+            filter: (structure) => { 
+                return (structure.structureType == STRUCTURE_CONTAINER || structure.structureType == STRUCTURE_STORAGE) && structure.store[RESOURCE_ENERGY] > 0;
+            }
+        });
+
+        var roomEnergy = 0;
+
+        stores.forEach(store => {
+            roomEnergy += store.store[RESOURCE_ENERGY];
+        });
+
+        roomEnergy += Game.rooms[rm].energyAvailable;
+
+        return roomEnergy;
     }
 };
 module.exports = utilities;

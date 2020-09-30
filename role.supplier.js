@@ -11,21 +11,21 @@ var roleSupplier = {
         var mineral = creep.pos.findClosestByRange(FIND_MINERALS);
         //GET RESOURCES
         if(!creep.memory.filling) {
-                if(!creep.room.storage) {
-                   //get dropped energy
-                    var dropenergy = creep.room.find(FIND_DROPPED_RESOURCES, {
-                            filter: (d) => {return (d.resourceType == RESOURCE_ENERGY && d.amount >= creep.carryCapacity)}});
-                    var highestDropEnergy = dropenergy[0];
-                    for (var i = 0; i < dropenergy.length; i++) {
-                        if (highestDropEnergy.amount < dropenergy[i].amount) {
-                            highestDropEnergy = dropenergy[i];
-                        }
+            if(!creep.room.storage) {
+                //get dropped energy
+                var dropenergy = creep.room.find(FIND_DROPPED_RESOURCES, {
+                        filter: (d) => {return (d.resourceType == RESOURCE_ENERGY && d.amount >= creep.carryCapacity)}});
+                var highestDropEnergy = dropenergy[0];
+                for (var i = 0; i < dropenergy.length; i++) {
+                    if (highestDropEnergy.amount < dropenergy[i].amount) {
+                        highestDropEnergy = dropenergy[i];
                     }
-                    if (highestDropEnergy) {
-                        if (creep.pickup(highestDropEnergy) == ERR_NOT_IN_RANGE) {
-                            creep.travelTo(highestDropEnergy);
-                        }
+                }
+                if (highestDropEnergy) {
+                    if (creep.pickup(highestDropEnergy) == ERR_NOT_IN_RANGE) {
+                        creep.travelTo(highestDropEnergy);
                     }
+                }
             } else {
                 //get dropped energy
                 var dropenergy = creep.room.find(FIND_DROPPED_RESOURCES, {

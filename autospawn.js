@@ -400,9 +400,13 @@ let autospawn = {
         try { //AUTOMATIC ADDING OF NEW REMOTE MINING ROOMS
             if (remoteRooms.length == 0) { //no remotes yet! Scout them and add the first one. 
 
-                // Only if the colony has finished building !
+                // Skip remotes for now if low energy
                 var constr = Game.rooms[colony].find(FIND_MY_CONSTRUCTION_SITES);
-                if (constr.length && constr.length > 0) return; 
+                var energy = utilities.GetTotalRoomEnergy(colony);
+
+                if (constr.length && constr.length > 0 && energy < 4000) {
+                    return; 
+                }
                 
                 var bestRemote = scouting.FindRemoteMine(colony, 0);
                 if (bestRemote === false) { //not all connected rooms scouted yet! Scout Them.
