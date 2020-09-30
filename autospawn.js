@@ -21,6 +21,10 @@ let autospawn = {
                         var realWorkersS1 = _.sum(groupedCreeps[ctrl.room.name], (c) => c.memory.role == 'worker' && c.memory.homeRoom == ctrl.room.name && c.memory.s == 1 );
                         //ADJUST DESIRED CREEP AMOUNTS
                         var sources = ctrl.room.find(FIND_SOURCES);
+
+                        var thirdSource = utilities.FindNearestSource(ctrl.room.name, 30);
+                        //TODO: start mining this!
+
                         var accessibleFieldsS0 = utilities.GetSourceSpaces(sources[0]);
                         var accessibleFieldsS1 = utilities.GetSourceSpaces(sources[1]);
                         
@@ -407,7 +411,7 @@ let autospawn = {
                 if (constr.length && constr.length > 0 && energy < 4000) {
                     return; 
                 }
-                
+
                 var bestRemote = scouting.FindRemoteMine(colony, 0);
                 if (bestRemote === false) { //not all connected rooms scouted yet! Scout Them.
                     scouting.ScoutRemoteRooms(colony);
@@ -428,7 +432,7 @@ let autospawn = {
     DoEarlyScouting: function(colony) {
         var homeCtrl = Game.rooms[colony].controller;
 
-        if (homeCtrl.level < 2) return; //Minimum RCL is 2
+        //if (homeCtrl.level < 2) return; //Minimum RCL is 2
         if (!(Game.time % 100 == 0)) return; //Every 100 Ticks.
         
         scouting.EarlyScouting(colony);

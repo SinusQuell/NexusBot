@@ -34,10 +34,9 @@ var scouting = {
      */
     FindRemoteMine: function(colony, quality) {  
         if (this.DidScoutForRemotes(colony) === false) return false; //only if all have been scouted
-
         var sortedRooms = this.SortRemotesByScore(colony);
+        console.log(sortedRooms.length);
         if (quality > sortedRooms.length-1) return false; //check if there are enough remotes (this should never happen)
-        
         return sortedRooms[sortedRooms.length-1-quality];
     },
     DidScoutForRemotes: function(colony, early = false) {
@@ -118,7 +117,7 @@ var scouting = {
         var rmObjects = [];
         connectedRooms.forEach(rm => {
             if (rm == undefined) return;
-            if (Memory.rooms[rm]['isOccupied'] = true) return; //don't return occupied rooms!
+            if (Memory.rooms[rm]['isOccupied'] == true) return; //don't return occupied rooms!
 
             rmObj = {room: rm, score: Memory.rooms[rm]['score']};
             rmObjects.push(rmObj);

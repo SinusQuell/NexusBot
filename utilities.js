@@ -419,9 +419,6 @@ let utilities = {
         Game.rooms[rm].controller.unclaim();
         delete Memory.colonies[rm];
     },
-    FindCloseSources: function(originPos, range) {
-
-    },
     //this does not include dropped energy at the moment
     GetTotalRoomEnergy: function(rm) {
         if (!Game.rooms[rm]) return false;
@@ -441,6 +438,50 @@ let utilities = {
         roomEnergy += Game.rooms[rm].energyAvailable;
 
         return roomEnergy;
+    },
+    //returns the RoomPositions of the nearest source outside the origin room
+    FindNearestSource: function(originRoom, maxRange) {
+
+        //Find the first spawn, as origin position
+        var spawns = Game.rooms[originRoom].find(FIND_MY_STRUCTURES, {
+            filter: (structure) => {
+                return (structure.structureType == STRUCTURE_SPAWN);
+            }
+        });
+        if (!spawns || spawns.length == 0) return false;
+        var firstSpawn = spawns[0];
+
+        var connectedRooms = scouting.GetConnectedRooms(originRoom);
+        if (!connectedRooms || connectedRooms.length <= 0) return false;
+
+        var lowestDistanceSource = false;
+        var lowestDistance = maxRange + 1; 
+        
+        //get the nearest source outside of the origin room
+        connectedRooms.forEach(rm => {
+            if (rm == undefined) return; // skip rooms with no exits
+            if (!Memory.rooms[rm]['sources']) return; //we need the sources data, rooms need to be scouted 
+
+            //get sources
+            var sources = Memory.rooms[rm]['sources'];
+            if (!sources || sources.length <= 0) return; //skip rooms without sources
+
+            //get distance to sources in this room
+            sources.forEach(source => {
+                var distance = utilities.GetDistance(firstSpawn.pos, source.pos)
+                
+                if (lowestDistanceSource === false || lowestDistance > distance) {
+                    //this one is closer!
+                    lowestDistance = distance;
+                    lowestDistanceSource = source;
+                }
+            });
+
+        });
+
+        //return their positions as an array of RoomPositions
+        if (lowestDistance > maxRange) return false;
+        else return lowestDistanceSource;
     }
 };
 module.exports = utilities;
