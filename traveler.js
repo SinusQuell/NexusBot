@@ -435,10 +435,9 @@ class Traveler {
             else if (structure instanceof StructureRoad) {
                 matrix.set(structure.pos.x, structure.pos.y, roadCost);
             }
-            else if (structure instanceof StructureContainer) {
+            else if (structure instanceof StructureContainer || structure instanceof Ruin) {
                 matrix.set(structure.pos.x, structure.pos.y, 5);
-            }
-            else {
+            } else {
                 impassibleStructures.push(structure);
             }
         }
