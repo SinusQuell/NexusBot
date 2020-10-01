@@ -2,6 +2,7 @@ var colonizer = require('colonizer');
 var spawningHome = require('spawning.home');
 var spawningRemote = require('spawning.remote');
 var spawningCombat = require('spawning.combat');
+const utilities = require('./utilities');
 
 let autospawn = {
     SpawnCreeps: function() {
@@ -143,11 +144,14 @@ let autospawn = {
                         if (wantedUpgraders < 0 || (ctrl.room.storage && ctrl.room.storage.store[RESOURCE_ENERGY] < 50000)) {
                             wantedUpgraders = 0;
                         }
+                        if (!ctrl.room.storage && utilities.GetTotalRoomEnergy > 8000) {
+                            wantedUpgraders += 1;
+                        }
                         if (ctrl.level == 8) {
                             upgraderSize = 4;
                             wantedUpgraders = 1;
-                        }
-                        
+                        } 
+                                                
                         if (ctrl.room.storage && ctrl.room.storage.store[RESOURCE_ENERGY] > 290000) {
                             if (ctrl.room.find(FIND_MY_CONSTRUCTION_SITES).length > 0) {
                                 wantedWorkersS1 = 1;   
