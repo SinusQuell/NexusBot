@@ -368,11 +368,13 @@ let utilities = {
     StopColonization: function(rm) {
         Memory.colonies[rm].colonization = {};  
     },
+    //TODO: enable kickstarting of multiple colonies at the same time
     KickstartColony: function(startRoom, targetRoom, amnt = 1) {
         Memory.colonies[startRoom].kickstarting['rm'] = targetRoom;
         Memory.colonies[startRoom].kickstarting['amount'] = amnt;    
         return '<font color="#4ef711" type="highlight">' + 'Kickstarting Colony ' + targetRoom + '...' + '</font>';
     },
+    //Kickstarting end automatically when the new colony reaches RCL 2 - See the corresponding method in autospawn.js.
     StopKickStarting: function(startColony) {
         Memory.colonies[startColony].kickstarting = {};
         return '<font color="#4ef711" type="highlight">' + 'Kickstart Request Removed for Colony ' + Memory.colonies[startColony].kickstarting['rm'] + '.' + '</font>';

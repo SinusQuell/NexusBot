@@ -65,8 +65,10 @@ let spawningRemote = {
         var cap = sp.room.energyCapacityAvailable;
         if (cap >= claimCost[sz]) {
             sp.spawnCreep(claimParts[sz], 'rsrv' + Game.time, { memory: {role: 'reserver', homeRoom: sp.room.name, target: t}});
-        } else {
+        } else if (cap >= claimCost[sz-1]) {
             sp.spawnCreep(claimParts[sz-1], 'rsrv' + Game.time, { memory: {role: 'reserver', homeRoom: sp.room.name, target: t}});
+        } else {
+            sp.spawnCreep(claimParts[sz-2], 'rsrv' + Game.time, { memory: {role: 'reserver', homeRoom: sp.room.name, target: t}});
         }
     },
     SpawnClaimer: function(sp, t, newShardTgt, tgtShard = Game.shard.name) {

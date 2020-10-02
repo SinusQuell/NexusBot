@@ -4,7 +4,7 @@ var spawningRemote = require('spawning.remote');
 let colonizer = {
     Colonize: function(startColony, targetRoom, freeSpawn, spawnX, spawnY) {
         var wantedClaimers = 0;
-        var wantedPioneers = 1; //(per source)
+        var wantedPioneers = 1; // per source in new colony
         if (!Game.rooms[targetRoom] || !!Game.rooms[targetRoom].controller || !Game.rooms[targetRoom].controller.my) { //not claimed yet, we need a claimer!
             wantedClaimers = 1;
         } else { //got vision in the room
@@ -17,8 +17,8 @@ let colonizer = {
                     //spawn is finished! delete colonization entry.
                     console.log('<font color="#4ef711" type="highlight">' + 'Colonization completed in: ' + targetRoom + '!</font>');
                     wantedPioneers = 0;
-                    Memory.colonies[startColony].colonization = {};
-                    autobuild.SetAutoBuild(targetRoom, true, spawnX, spawnY);
+                    Memory.colonies[startColony].colonization = {}; // clear colonization order in memory
+                    autobuild.SetAutoBuild(targetRoom, true, spawnX, spawnY); //enable autobuild in the new colony
                 }
             }
         }
@@ -33,9 +33,9 @@ let colonizer = {
             if (realClaimers < wantedClaimers) {
                 spawningRemote.SpawnClaimer(freeSpawn, targetRoom);
             } else if (realPioneersS0 < wantedPioneers) {
-                spawningRemote.SpawnPioneer(freeSpawn, targetRoom, 3, 0);
+                spawningRemote.SpawnPioneer(freeSpawn, targetRoom, pioneerSize, 0);
             } else if (realPioneersS1 < wantedPioneers) {
-                spawningRemote.SpawnPioneer(freeSpawn, targetRoom, 3, 1);
+                spawningRemote.SpawnPioneer(freeSpawn, targetRoom, pioneerSize, 1);
             }
         }
         var totalPioneers = realPioneersS0 + realPioneersS1;
