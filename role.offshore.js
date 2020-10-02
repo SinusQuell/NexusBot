@@ -9,7 +9,7 @@ var roleOffshore = {
 	    if(creep.memory.harvesting && (_.sum(creep.carry)) == (creep.carryCapacity)) {
 	        creep.memory.harvesting = false;
         }
-        scouting.CalculateRemoteMineScore(creep.memory.homeRoom, creep.room.name, true);
+ 
         if (creep.room.name != creep.memory.target) {
             //CREEP IS NOT IN TARGET ROOM, GET THERE!
             creep.travelTo({ pos: new RoomPosition(25,25,creep.memory.target)});

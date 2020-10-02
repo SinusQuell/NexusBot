@@ -8,6 +8,13 @@ var roleClaimer = {
         if (creep.room.name != creep.memory.target) {
             //NOT IN TARGET TOOM. MOVE TO TARGET ROOM.
             creep.travelTo({ pos: new RoomPosition(25,25,creep.memory.target)}); 
+
+            //Every 5 Ticks while traveling
+            if (Game.time % 5 == 0) { 
+                scouting.IsRoomOccupied(creep.room.name);
+                scouting.CheckSourceAmount(creep.room.name);
+                scouting.CalculateRemoteMineScore(creep.memory.homeRoom, creep.room.name, true);
+            }
         } else {
             if(creep.pos.x*creep.pos.y === 0 || creep.pos.x === 49 || creep.pos.y === 49) {
                 creep.travelTo(creep.room.controller);
