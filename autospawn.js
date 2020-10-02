@@ -389,8 +389,10 @@ let autospawn = {
         }
     },
     KickStartColony: function(startColony, targetColony, freeSpawn, amnt) {
-        if (Game.rooms[targetColony] && Game.rooms[targetColony].controller.level >= 2) {
+        var spawn = _.filter(Game.spawns, sp => sp.room.name == targetColony);
+        if (Game.rooms[targetColony] && spawn && spawn.length >= 1) {
             utilities.StopKickStarting(startColony);
+            console.log('<font color="#4ef711" type="highlight">' + 'STOPPING Kickstarting in: ' + startColony + '->' + targetColony + ' (Spawn is built) </font>');
         }
 
         var wantedWorkers = amnt;
