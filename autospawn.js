@@ -24,9 +24,12 @@ let autospawn = {
                         //ADJUST DESIRED CREEP AMOUNTS
                         var sources = ctrl.room.find(FIND_SOURCES);
 
+
+                        var thirdSource = utilities.FindNearestSource(ctrl.room.name, 30);
+
                         var accessibleFieldsS0 = utilities.GetSourceSpaces(sources[0]);
                         var accessibleFieldsS1 = utilities.GetSourceSpaces(sources[1]);
-                        var accessibleFieldsS2 = utilities.GetSourceSpaces(sources[2]);
+                        var accessibleFieldsS2 = utilities.GetSourceSpaces(thirdSource);
 
                         if (ctrl.level == 2) {
                             var wantedWorkersS0 = accessibleFieldsS0 + 2;
@@ -38,7 +41,7 @@ let autospawn = {
                             var wantedWorkersS2 = accessibleFieldsS2 + 4;
                         }
 
-                        var thirdSource = utilities.FindNearestSource(ctrl.room.name, 30);
+                        
                         if (!thirdSource) {
                             realWorkersS2 = 0;
                             wantedWorkersS2 = 0;

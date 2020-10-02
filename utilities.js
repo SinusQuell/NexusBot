@@ -74,6 +74,8 @@ let utilities = {
         }
     },
     GetSourceSpaces: function(source) {
+        if (!source.room) return; // check for vision
+        
         var fields = source.room.lookForAtArea(LOOK_TERRAIN, source.pos.y-1, source.pos.x-1, source.pos.y+1, source.pos.x+1, true);
         var accessibleFields = 9-_.countBy( fields , "terrain" ).wall;
         return accessibleFields;
@@ -462,6 +464,7 @@ let utilities = {
         //get the nearest source outside of the origin room
         connectedRooms.forEach(rm => {
             if (rm == undefined) return; // skip rooms with no exits
+            if (!Memory.rooms[rm]) return; // check for vision
             if (!Memory.rooms[rm]['sources']) return; //we need the sources data, rooms need to be scouted 
 
             //get sources
