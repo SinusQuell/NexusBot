@@ -5,7 +5,7 @@ let colonizer = {
     Colonize: function(startColony, targetRoom, freeSpawn, spawnX, spawnY) {
         var wantedClaimers = 0;
         var wantedPioneers = 1; // per source in new colony
-        if (!Game.rooms[targetRoom] || !!Game.rooms[targetRoom].controller || !Game.rooms[targetRoom].controller.my) { //not claimed yet, we need a claimer!
+        if (!Game.rooms[targetRoom] || !Game.rooms[targetRoom].controller || !Game.rooms[targetRoom].controller.my) { //not claimed yet, we need a claimer!
             wantedClaimers = 1;
         } else { //got vision in the room
             if (Game.rooms[targetRoom].controller && Game.rooms[targetRoom].controller.my) {
