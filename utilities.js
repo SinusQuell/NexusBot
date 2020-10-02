@@ -74,9 +74,9 @@ let utilities = {
         }
     },
     GetSourceSpaces: function(source) {
-        if (!source.room) return; // check for vision
+        if (!Game.rooms[source.room.name]) return; // check for vision
         
-        var fields = source.room.lookForAtArea(LOOK_TERRAIN, source.pos.y-1, source.pos.x-1, source.pos.y+1, source.pos.x+1, true);
+        var fields = Game.rooms[source.room.name].lookForAtArea(LOOK_TERRAIN, source.pos.y-1, source.pos.x-1, source.pos.y+1, source.pos.x+1, true);
         var accessibleFields = 9-_.countBy( fields , "terrain" ).wall;
         return accessibleFields;
     },

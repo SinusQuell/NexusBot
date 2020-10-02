@@ -48,17 +48,10 @@ var roleWorker = {
                             }
                         } else {
                             //no containers/storage or they are empty, harvest
-                            if (creep.memory.s == 2) {
-                                var source = utilities.FindNearestSource(creep.memory.homeRoom, 30);
-                                if(creep.harvest(sources[source]) == ERR_NOT_IN_RANGE) {
-                                    creep.travelTo(sources[source]);
-                                }
-                            } else {
-                                var sources = creep.room.find(FIND_SOURCES);
-                                if (sources[creep.memory.s].energy > 0) {
-                                    if(creep.harvest(sources[creep.memory.s]) == ERR_NOT_IN_RANGE) {
-                                        creep.travelTo(sources[creep.memory.s]);
-                                    }
+                            var sources = creep.room.find(FIND_SOURCES);
+                            if (sources[creep.memory.s].energy > 0) {
+                                if(creep.harvest(sources[creep.memory.s]) == ERR_NOT_IN_RANGE) {
+                                    creep.travelTo(sources[creep.memory.s]);
                                 }
                             }
                         }
