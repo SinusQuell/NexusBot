@@ -2,6 +2,7 @@ var colonizer = require('colonizer');
 var spawningHome = require('spawning.home');
 var spawningRemote = require('spawning.remote');
 var spawningCombat = require('spawning.combat');
+const utilities = require('./utilities');
 
 let autospawn = {
     SpawnCreeps: function() {
@@ -19,26 +20,33 @@ let autospawn = {
                         //CHECK PRESENT CREEP AMOUNTS
                         var realWorkersS0 = _.sum(groupedCreeps[ctrl.room.name], (c) => c.memory.role == 'worker' && c.memory.homeRoom == ctrl.room.name && c.memory.s == 0 );
                         var realWorkersS1 = _.sum(groupedCreeps[ctrl.room.name], (c) => c.memory.role == 'worker' && c.memory.homeRoom == ctrl.room.name && c.memory.s == 1 );
+                        var realWorkersS2 = _.sum(groupedCreeps[ctrl.room.name], (c) => c.memory.role == 'worker' && c.memory.homeRoom == ctrl.room.name && c.memory.s == 2 );
                         //ADJUST DESIRED CREEP AMOUNTS
                         var sources = ctrl.room.find(FIND_SOURCES);
 
-                        var thirdSource = utilities.FindNearestSource(ctrl.room.name, 30);
-                        //TODO: start mining this!
-
                         var accessibleFieldsS0 = utilities.GetSourceSpaces(sources[0]);
                         var accessibleFieldsS1 = utilities.GetSourceSpaces(sources[1]);
-                        
+                        var accessibleFieldsS2 = utilities.GetSourceSpaces(sources[2]);
+
                         if (ctrl.level == 2) {
                             var wantedWorkersS0 = accessibleFieldsS0 + 2;
                             var wantedWorkersS1 = accessibleFieldsS1 + 2;
+                            var wantedWorkersS2 = accessibleFieldsS2 + 3;
                         } else {
                             var wantedWorkersS0 = accessibleFieldsS0 + 3;
                             var wantedWorkersS1 = accessibleFieldsS1 + 3;
+                            var wantedWorkersS2 = accessibleFieldsS2 + 4;
+                        }
+
+                        var thirdSource = utilities.FindNearestSource(ctrl.room.name, 30);
+                        if (!thirdSource) {
+                            realWorkersS2 = 0;
+                            wantedWorkersS2 = 0;
                         }
                         
                         var workerSize = ctrl.level;
                         
-                        var totalWorkers = realWorkersS0 + realWorkersS1;
+                        var totalWorkers = realWorkersS0 + realWorkersS1 + realWorkersS2;
                         var totalWantedWorkers = wantedWorkersS0 + wantedWorkersS1;
                         console.log('<font color="#ffdd32" type="highlight">' + ctrl.room.name + '</font>' + ': Workers: ' + totalWorkers + '/' + totalWantedWorkers);
                         //CHECK FOR RECOVERY MODE
@@ -57,6 +65,8 @@ let autospawn = {
                                 spawningHome.SpawnWorker(freeSpawn, 0, workerSize, ctrl.room.name);
                             } else if (realWorkersS1 < wantedWorkersS1) {
                                 spawningHome.SpawnWorker(freeSpawn, 1, workerSize, ctrl.room.name);
+                            } else if (realWorkersS2 < wantedWorkersS2) {
+                                spawningHome.SpawnWorker(freeSpawn, 2, workerSize, ctrl.room.name);
                             } else {
                                 //ALL REGULAR UNITS ARE SPAWNED
                                 this.DoEarlyScouting(ctrl.room.name);
@@ -134,11 +144,14 @@ let autospawn = {
                         if (wantedUpgraders < 0 || (ctrl.room.storage && ctrl.room.storage.store[RESOURCE_ENERGY] < 50000)) {
                             wantedUpgraders = 0;
                         }
+                        if (!ctrl.room.storage && utilities.GetTotalRoomEnergy > 8000) {
+                            wantedUpgraders += 1;
+                        }
                         if (ctrl.level == 8) {
                             upgraderSize = 4;
                             wantedUpgraders = 1;
-                        }
-                        
+                        } 
+                                                
                         if (ctrl.room.storage && ctrl.room.storage.store[RESOURCE_ENERGY] > 290000) {
                             if (ctrl.room.find(FIND_MY_CONSTRUCTION_SITES).length > 0) {
                                 wantedWorkersS1 = 1;   

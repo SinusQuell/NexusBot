@@ -23,7 +23,8 @@ var roleWorker = {
     	    if(creep.memory.harvesting) {
     	        //get dropped energy
                 var dropenergy = creep.pos.findInRange(FIND_DROPPED_RESOURCES, 3, {
-                        filter: (d) => {return (d.resourceType == RESOURCE_ENERGY && d.amount > 50)}});
+                        filter: (d) => {return (d.resourceType == RESOURCE_ENERGY && d.amount > 50)}
+                    });
                 if (dropenergy.length > 0) {
                     if (creep.pickup(dropenergy[0]) == ERR_NOT_IN_RANGE) {
                         creep.travelTo(dropenergy[0]);
@@ -47,10 +48,17 @@ var roleWorker = {
                             }
                         } else {
                             //no containers/storage or they are empty, harvest
-                            var sources = creep.room.find(FIND_SOURCES);
-                            if (sources[creep.memory.s].energy > 0) {
-                                if(creep.harvest(sources[creep.memory.s]) == ERR_NOT_IN_RANGE) {
-                                    creep.travelTo(sources[creep.memory.s]);
+                            if (creep.memory.s == 2) {
+                                var source = utilities.FindNearestSource(creep.memory.homeRoom, 30);
+                                if(creep.harvest(sources[source]) == ERR_NOT_IN_RANGE) {
+                                    creep.travelTo(sources[source]);
+                                }
+                            } else {
+                                var sources = creep.room.find(FIND_SOURCES);
+                                if (sources[creep.memory.s].energy > 0) {
+                                    if(creep.harvest(sources[creep.memory.s]) == ERR_NOT_IN_RANGE) {
+                                        creep.travelTo(sources[creep.memory.s]);
+                                    }
                                 }
                             }
                         }
