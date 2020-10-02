@@ -99,8 +99,9 @@ var scouting = {
                     Memory.rooms[rm] = {};
                 }
 
-                score = Memory.rooms[rm]['score'];
-                if (!score) {
+                var score = Memory.rooms[rm]['score'];
+                var sources = Memory.rooms[rm]['sources'];
+                if (!score || !sources) {
                     spawningRemote.SpawnScout(utilities.FindFreeSpawn(colony), rm);
                     return;
                 }
