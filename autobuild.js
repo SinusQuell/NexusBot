@@ -240,8 +240,8 @@ let autobuild = {
                         this.BuildNukerAndPowerSpawn(rm, originX, originY);
                     }
                     
-                    //REMOTE ROAD BUILDING (Every 2nd tick)
-                    if (ctrl.level >= 3 && Game.time % 101 == 0) {
+                    //REMOTE ROAD BUILDING
+                    if (ctrl.level >= 3 && Game.time % 5 == 0) {
                         this.BuildRoadsForRemotes(rm);
                     }
                 }
@@ -674,17 +674,18 @@ let autobuild = {
 
             sources = Game.rooms[oRemoteRoom['room']].find(FIND_SOURCES);
 
+
+            //TODO: build closest source first, then second
             if (oRemoteRoom['built'] === false) {
                 this.BuildRoad(colony, sources[0].pos, true);
                 oRemoteRoom['built'] = 0;
-            } else if (oRemoteRoom['built'] === 0) {
-                if (!sources.length > 1) { // only 1 source
-                    oRemoteRoom['built'] = true;
-                    return;
+            } else if (oRemoteRoom['built'] == 0) {
+                if (sources.length > 1) { // only try to build second source if it's there.
+                    this.BuildRoad(colony, sources[1].pos, true)
                 }
 
-                this.BuildRoad(colony, sources[1].pos, true)
                 oRemoteRoom['built'] = true;
+                return;
             }
                     
         });
