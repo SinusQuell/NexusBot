@@ -128,7 +128,7 @@ let autobuild = {
                                 this.AddToBuildQueue(rm, linkPosController.x, linkPosController.y, STRUCTURE_LINK);
                                 
                                 var sources = Game.rooms[rm].find(FIND_SOURCES);
-                                var linkPosS0 = this.GetContainerPosition(rm, sources[0], 2);
+                                var linkPosS0 = this.GetContainerPosition(rm, sources[0], 1);
                                 this.AddToBuildQueue(rm, linkPosS0.x, linkPosS0.y, STRUCTURE_LINK);
                                 
                                 this.AddToBuildQueue(rm, originX + 5, originY - 7, STRUCTURE_ROAD);
@@ -168,7 +168,7 @@ let autobuild = {
                                 
                                 //LINK FOR SOURCE 2
                                 var sources = Game.rooms[rm].find(FIND_SOURCES);
-                                var linkPosS1 = this.GetContainerPosition(rm, sources[1], 2);
+                                var linkPosS1 = this.GetContainerPosition(rm, sources[1], 1);
                                 this.AddToBuildQueue(rm, linkPosS1.x, linkPosS1.y, STRUCTURE_LINK);
                                 
                                 //EXTRACTOR + ROAD TO MINERAL
