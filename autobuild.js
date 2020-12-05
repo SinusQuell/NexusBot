@@ -693,6 +693,8 @@ let autobuild = {
     CheckRuinsForRebuild: function(rm) {
         var rebuild = false;
         var numRuins = 0;
+        if (!Game.rooms || !Game.rooms[rm]) return; 
+
         Game.rooms[rm].find(FIND_RUINS).forEach(function(ruin) {
             if (ruin.structure.structureType == STRUCTURE_ROAD || ruin.structure.structureType == STRUCTURE_CONTAINER) {
                 numRuins += 1;

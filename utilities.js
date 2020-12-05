@@ -13,6 +13,9 @@ let utilities = {
     },
     UpdateColonyMemory: function(ctrl) {
         var rm = ctrl.room.name;
+        if (!Memory.rooms) {
+            Memory.rooms = {};
+        }
         if (!Memory.buildQueue) {
             Memory.buildQueue = [];
         }
