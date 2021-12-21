@@ -167,7 +167,7 @@ var scouting = {
         Memory.rooms[rm]['sourceAmount'] = sources.length;
         Memory.rooms[rm]['sources'] = sources; 
     },
-    CalculateRemoteMineScore(colony, rm, saveToMemory = false) {
+    CalculateRemoteMineScore: function(colony, rm, saveToMemory = false) {
         if (!Game.rooms[colony] || !Game.rooms[rm]) return; //check for vision
         if (!Memory.rooms[rm]) Memory.rooms[rm] = {}; //create Memory Object if it doesn't exist yet
         if (Memory.rooms[rm]['score'] && Memory.rooms[rm]['score'] != null) return; //already checked

@@ -633,6 +633,8 @@ let autobuild = {
                 if (Object.keys(Game.constructionSites).length < MAX_CONSTRUCTION_SITES - 20) { //global limit for construction sites not reached yet.
                     var toBuild = buildQueue[0];
 
+                    if (!Game.rooms[toBuild['buildRoom']]) return; //check for vision
+
                     cSite = Game.rooms[toBuild['buildRoom']].lookForAt(LOOK_CONSTRUCTION_SITES, toBuild['buildX'], toBuild['buildY']);
                     
                     //check for creep at the position, as they block construction via code
